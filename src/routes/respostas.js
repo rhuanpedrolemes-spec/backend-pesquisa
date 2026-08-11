@@ -7,6 +7,8 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const {
+      clienteNome,
+      clienteWhatsapp,
       notaAtendimento,
       assinante,
       satisfacaoAssinatura,
@@ -20,6 +22,8 @@ router.post("/", async (req, res) => {
     } = req.body;
 
     const resposta = await Resposta.create({
+      clienteNome,
+      clienteWhatsapp,
       notaAtendimento,
       assinante,
       satisfacaoAssinatura,

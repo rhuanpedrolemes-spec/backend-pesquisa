@@ -2,6 +2,18 @@ const mongoose = require("mongoose");
 
 const respostaSchema = new mongoose.Schema(
   {
+    clienteNome: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 1,
+    },
+    clienteWhatsapp: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 1,
+    },
     notaAtendimento: {
       type: Number,
       min: 1,
