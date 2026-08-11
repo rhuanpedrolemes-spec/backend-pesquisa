@@ -1,10 +1,10 @@
 const express = require("express");
 const Resposta = require("../models/Resposta");
-const checarPin = require("../middleware/checarPin");
+const verificarToken = require("../middleware/verificarToken");
 
 const router = express.Router();
 
-router.use(checarPin);
+router.use(verificarToken);
 
 // GET /api/respostas — protegida, lista todas as respostas (mais recentes primeiro)
 router.get("/", async (req, res) => {
