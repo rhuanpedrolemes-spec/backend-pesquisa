@@ -30,6 +30,7 @@ API da pesquisa de satisfação da barbearia Tradição do Boleiro (Node.js + Ex
 | POST   | `/api/admin/login`       | Pública                                   | Autentica o administrador e retorna um JWT         |
 | GET    | `/api/respostas`         | Protegida (header `Authorization: Bearer <token>`) | Lista todas as respostas, mais recentes primeiro |
 | GET    | `/api/respostas/resumo`  | Protegida (header `Authorization: Bearer <token>`) | Total de respostas e médias de `notaAtendimento`/`satisfacaoGeral` |
+| DELETE | `/api/respostas/:id`     | Protegida (header `Authorization: Bearer <token>`) | Exclui uma resposta pelo id (`204` ao excluir, `404` se não existir) |
 
 ## Autenticação do painel administrativo
 

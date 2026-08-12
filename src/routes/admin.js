@@ -42,4 +42,23 @@ router.get("/resumo", async (req, res) => {
   }
 });
 
+// DELETE /api/respostas/:id — protegida, exclui uma resposta
+router.delete("/:id", async (req, res) => {
+  try {
+    const resposta = await Resposta.findByIdAndDelete(req.params.id);
+
+    if (!resposta) {
+      return res.status(404).json({ erro: "Resposta não encontrada." });
+    }
+
+    res.status(204).send();
+  } catch (erro) {
+    if (erro.name === "CastError") {
+      return res.status(400).json({ erro: "Id inválido." });
+    }
+    console.error("Erro ao excluir resposta:", erro);
+    res.status(500).json({ erro: "Erro interno ao excluir a resposta." });
+  }
+});
+
 module.exports = router;
