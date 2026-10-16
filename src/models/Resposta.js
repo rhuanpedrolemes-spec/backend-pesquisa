@@ -40,9 +40,10 @@ const respostaSchema = new mongoose.Schema(
       min: 1,
       max: 10,
     },
+    // Campos abaixo: legado do questionário antigo. Não são mais perguntados nem
+    // obrigatórios; seguem no schema só para exibir as respostas antigas no painel.
     assinante: {
       type: Boolean,
-      required: true,
     },
     satisfacaoAssinatura: {
       type: Number,

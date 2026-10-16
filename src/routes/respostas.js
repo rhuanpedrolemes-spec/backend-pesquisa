@@ -11,21 +11,7 @@ const JANELA_DUPLICADO_MS = 10 * 60 * 1000;
 // POST /api/respostas — pública, registra a resposta de um cliente
 router.post("/", async (req, res) => {
   try {
-    const {
-      clienteNome,
-      clienteWhatsapp,
-      barbeiro,
-      notaBarbeiro,
-      assinante,
-      satisfacaoAssinatura,
-      satisfacaoGeral,
-      comentario,
-      frequenciaCorte,
-      objecao,
-      interessePlano,
-      indicacaoNome,
-      indicacaoWhatsapp,
-    } = req.body;
+    const { clienteNome, clienteWhatsapp, barbeiro, notaBarbeiro } = req.body;
 
     if (!mongoose.isValidObjectId(barbeiro) || !(await Barbeiro.exists({ _id: barbeiro }))) {
       return res.status(400).json({ erro: "Barbeiro inválido." });
@@ -50,15 +36,6 @@ router.post("/", async (req, res) => {
       clienteWhatsappNormalizado,
       barbeiro,
       notaBarbeiro,
-      assinante,
-      satisfacaoAssinatura,
-      satisfacaoGeral,
-      comentario,
-      frequenciaCorte,
-      objecao,
-      interessePlano,
-      indicacaoNome,
-      indicacaoWhatsapp,
     });
 
     res.status(201).json(resposta);

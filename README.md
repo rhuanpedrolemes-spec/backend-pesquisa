@@ -12,7 +12,7 @@ API da pesquisa de satisfação da barbearia Tradição do Boleiro (Node.js + Ex
 | `notaBarbeiro`        | Number  | Sim         | Estrelas **inteiras de 1 a 5** dadas ao barbeiro                            |
 | `clienteWhatsappNormalizado` | String | automático | Só dígitos do WhatsApp, usado para detectar envio duplicado           |
 | `notaAtendimento`     | Number  | Não         | **Legado** (1 a 10) das respostas antigas, antes das estrelas por barbeiro   |
-| `assinante`           | Boolean | Sim         |                                                                               |
+| `assinante`           | Boolean | Não         | **Legado** (questionário antigo)                                             |
 | `satisfacaoAssinatura`| Number  | Não         | 1 a 10                                                                       |
 | `satisfacaoGeral`     | Number  | Não         | 1 a 10                                                                       |
 | `comentario`          | String  | Não         |                                                                               |
@@ -24,6 +24,8 @@ API da pesquisa de satisfação da barbearia Tradição do Boleiro (Node.js + Ex
 | `criadoEm`            | Date    | automático  | timestamp de criação                                                         |
 
 `clienteNome` e `clienteWhatsapp` são obrigatórios e não podem ser vazios (`minlength: 1` após `trim`) — o `POST /api/respostas` retorna `400` se estiverem ausentes ou em branco.
+
+> **Questionário atual:** a pesquisa só pergunta nome/WhatsApp, barbeiro e estrelas (1 a 5). Os campos `notaAtendimento`, `assinante`, `satisfacaoAssinatura`, `satisfacaoGeral`, `comentario`, `frequenciaCorte`, `objecao`, `interessePlano`, `indicacaoNome` e `indicacaoWhatsapp` são **legado**: não são mais enviados nem obrigatórios, e continuam no schema apenas para exibir as respostas antigas no painel. O `POST /api/respostas` só aceita `clienteNome`, `clienteWhatsapp`, `barbeiro` e `notaBarbeiro`.
 
 ### Modelo `Barbeiro` e ranking
 
