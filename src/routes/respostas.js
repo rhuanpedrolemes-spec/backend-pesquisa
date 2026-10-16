@@ -1,7 +1,12 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const Resposta = require("../models/Resposta");
+const Barbeiro = require("../models/Barbeiro");
 
 const router = express.Router();
+
+// Janela em que a mesma pessoa avaliando o mesmo barbeiro conta como envio duplicado.
+const JANELA_DUPLICADO_MS = 10 * 60 * 1000;
 
 // POST /api/respostas — pública, registra a resposta de um cliente
 router.post("/", async (req, res) => {
@@ -9,7 +14,8 @@ router.post("/", async (req, res) => {
     const {
       clienteNome,
       clienteWhatsapp,
-      notaAtendimento,
+      barbeiro,
+      notaBarbeiro,
       assinante,
       satisfacaoAssinatura,
       satisfacaoGeral,
@@ -21,10 +27,29 @@ router.post("/", async (req, res) => {
       indicacaoWhatsapp,
     } = req.body;
 
+    if (!mongoose.isValidObjectId(barbeiro) || !(await Barbeiro.exists({ _id: barbeiro }))) {
+      return res.status(400).json({ erro: "Barbeiro inválido." });
+    }
+
+    const clienteWhatsappNormalizado = String(clienteWhatsapp ?? "").replace(/\D/g, "");
+
+    if (clienteWhatsappNormalizado) {
+      const duplicada = await Resposta.exists({
+        barbeiro,
+        clienteWhatsappNormalizado,
+        criadoEm: { $gte: new Date(Date.now() - JANELA_DUPLICADO_MS) },
+      });
+      if (duplicada) {
+        return res.status(409).json({ erro: "Avaliação duplicada." });
+      }
+    }
+
     const resposta = await Resposta.create({
       clienteNome,
       clienteWhatsapp,
-      notaAtendimento,
+      clienteWhatsappNormalizado,
+      barbeiro,
+      notaBarbeiro,
       assinante,
       satisfacaoAssinatura,
       satisfacaoGeral,

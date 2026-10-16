@@ -14,6 +14,27 @@ const respostaSchema = new mongoose.Schema(
       trim: true,
       minlength: 1,
     },
+    clienteWhatsappNormalizado: {
+      type: String,
+      index: true,
+    },
+    barbeiro: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Barbeiro",
+      required: true,
+      index: true,
+    },
+    notaBarbeiro: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+      validate: {
+        validator: Number.isInteger,
+        message: "notaBarbeiro deve ser um número inteiro de 1 a 5.",
+      },
+    },
+    // Legado: nota 1-10 das respostas antigas (antes das estrelas por barbeiro).
     notaAtendimento: {
       type: Number,
       min: 1,

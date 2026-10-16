@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const app = require("./app");
+const seedBarbeiros = require("./seedBarbeiros");
 
 const PORT = process.env.PORT || 3000;
 
@@ -8,6 +9,8 @@ async function start() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Conectado ao MongoDB.");
+
+    await seedBarbeiros();
 
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);

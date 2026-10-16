@@ -8,7 +8,10 @@ API da pesquisa de satisfação da barbearia Tradição do Boleiro (Node.js + Ex
 |-----------------------|---------|-------------|------------------------------------------------------------------------------|
 | `clienteNome`         | String  | Sim         | Nome do cliente, coletado antes da primeira pergunta                        |
 | `clienteWhatsapp`     | String  | Sim         | WhatsApp do cliente, coletado antes da primeira pergunta                    |
-| `notaAtendimento`     | Number  | Não         | 1 a 10                                                                       |
+| `barbeiro`            | ObjectId| Sim         | Barbeiro que atendeu (ref. `Barbeiro`) — a avaliação fica vinculada a ele   |
+| `notaBarbeiro`        | Number  | Sim         | Estrelas **inteiras de 1 a 5** dadas ao barbeiro                            |
+| `clienteWhatsappNormalizado` | String | automático | Só dígitos do WhatsApp, usado para detectar envio duplicado           |
+| `notaAtendimento`     | Number  | Não         | **Legado** (1 a 10) das respostas antigas, antes das estrelas por barbeiro   |
 | `assinante`           | Boolean | Sim         |                                                                               |
 | `satisfacaoAssinatura`| Number  | Não         | 1 a 10                                                                       |
 | `satisfacaoGeral`     | Number  | Não         | 1 a 10                                                                       |
@@ -22,14 +25,29 @@ API da pesquisa de satisfação da barbearia Tradição do Boleiro (Node.js + Ex
 
 `clienteNome` e `clienteWhatsapp` são obrigatórios e não podem ser vazios (`minlength: 1` após `trim`) — o `POST /api/respostas` retorna `400` se estiverem ausentes ou em branco.
 
+### Modelo `Barbeiro` e ranking
+
+Coleção `Barbeiro` (`nome`, `slug`), criada/completada automaticamente na inicialização do servidor (seed idempotente, nunca apaga nem altera avaliações). A foto de cada um fica no frontend em `/barbeiros/<slug>.jpg`.
+
+`GET /api/barbeiros` (público) devolve os barbeiros já na ordem do ranking, com `totalAvaliacoes` e `media`:
+
+1. mais avaliações primeiro (o ranking é por **quantidade**, não por nota);
+2. empate → maior média;
+3. novo empate → ordem alfabética pelo nome.
+
+`media` = soma das notas ÷ quantidade (média aritmética, valores originais); o arredondamento para 1 casa (`4,8`) é feito só na exibição. Só contam avaliações válidas (`notaBarbeiro` inteira de 1 a 5 e barbeiro existente), cada resposta uma única vez. Recalculado a cada chamada, então exclusões e novas avaliações refletem na hora.
+
+Envio duplicado: o `POST /api/respostas` responde `409` se o mesmo WhatsApp (ignorando formatação) avaliar o mesmo barbeiro de novo em menos de 10 minutos.
+
 ## Endpoints
 
 | Método | Rota                    | Acesso                                  | Descrição                                        |
 |--------|--------------------------|-------------------------------------------|---------------------------------------------------|
 | POST   | `/api/respostas`         | Pública                                   | Registra uma nova resposta                         |
+| GET    | `/api/barbeiros`         | Pública                                   | Barbeiros ordenados por ranking, com média e nº de avaliações |
 | POST   | `/api/admin/login`       | Pública                                   | Autentica o administrador e retorna um JWT         |
 | GET    | `/api/respostas`         | Protegida (header `Authorization: Bearer <token>`) | Lista todas as respostas, mais recentes primeiro |
-| GET    | `/api/respostas/resumo`  | Protegida (header `Authorization: Bearer <token>`) | Total de respostas e médias de `notaAtendimento`/`satisfacaoGeral` |
+| GET    | `/api/respostas/resumo`  | Protegida (header `Authorization: Bearer <token>`) | Total de respostas e médias de `notaBarbeiro`/`notaAtendimento` (legado)/`satisfacaoGeral` |
 | DELETE | `/api/respostas/:id`     | Protegida (header `Authorization: Bearer <token>`) | Exclui uma resposta pelo id (`204` ao excluir, `404` se não existir) |
 
 ## Autenticação do painel administrativo

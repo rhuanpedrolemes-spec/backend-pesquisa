@@ -9,7 +9,9 @@ router.use(verificarToken);
 // GET /api/respostas — protegida, lista todas as respostas (mais recentes primeiro)
 router.get("/", async (req, res) => {
   try {
-    const respostas = await Resposta.find().sort({ criadoEm: -1 });
+    const respostas = await Resposta.find()
+      .sort({ criadoEm: -1 })
+      .populate("barbeiro", "nome slug");
     res.json(respostas);
   } catch (erro) {
     console.error("Erro ao listar respostas:", erro);
@@ -26,6 +28,7 @@ router.get("/resumo", async (req, res) => {
           _id: null,
           total: { $sum: 1 },
           mediaNotaAtendimento: { $avg: "$notaAtendimento" },
+          mediaNotaBarbeiro: { $avg: "$notaBarbeiro" },
           mediaSatisfacaoGeral: { $avg: "$satisfacaoGeral" },
         },
       },
@@ -34,6 +37,7 @@ router.get("/resumo", async (req, res) => {
     res.json({
       total: resumo?.total || 0,
       mediaNotaAtendimento: resumo?.mediaNotaAtendimento ?? null,
+      mediaNotaBarbeiro: resumo?.mediaNotaBarbeiro ?? null,
       mediaSatisfacaoGeral: resumo?.mediaSatisfacaoGeral ?? null,
     });
   } catch (erro) {
