@@ -34,6 +34,22 @@ const respostaSchema = new mongoose.Schema(
         message: "notaBarbeiro deve ser um número inteiro de 1 a 5.",
       },
     },
+    // Estrelas de 1 a 5 para a barbearia. Opcional: respostas antigas não têm.
+    notaBarbearia: {
+      type: Number,
+      min: 1,
+      max: 5,
+      validate: {
+        validator: Number.isInteger,
+        message: "notaBarbearia deve ser um número inteiro de 1 a 5.",
+      },
+    },
+    // Texto livre: o que a barbearia precisa melhorar. Opcional.
+    sugestaoMelhoria: {
+      type: String,
+      trim: true,
+      maxlength: 1000,
+    },
     // Legado: nota 1-10 das respostas antigas (antes das estrelas por barbeiro).
     notaAtendimento: {
       type: Number,

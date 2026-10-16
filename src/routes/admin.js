@@ -29,6 +29,7 @@ router.get("/resumo", async (req, res) => {
           total: { $sum: 1 },
           mediaNotaAtendimento: { $avg: "$notaAtendimento" },
           mediaNotaBarbeiro: { $avg: "$notaBarbeiro" },
+          mediaNotaBarbearia: { $avg: "$notaBarbearia" },
           mediaSatisfacaoGeral: { $avg: "$satisfacaoGeral" },
         },
       },
@@ -38,6 +39,7 @@ router.get("/resumo", async (req, res) => {
       total: resumo?.total || 0,
       mediaNotaAtendimento: resumo?.mediaNotaAtendimento ?? null,
       mediaNotaBarbeiro: resumo?.mediaNotaBarbeiro ?? null,
+      mediaNotaBarbearia: resumo?.mediaNotaBarbearia ?? null,
       mediaSatisfacaoGeral: resumo?.mediaSatisfacaoGeral ?? null,
     });
   } catch (erro) {
