@@ -49,6 +49,17 @@ router.get("/resumo", async (req, res) => {
   }
 });
 
+// DELETE /api/respostas — protegida, apaga TODAS as respostas (zera médias e ranking)
+router.delete("/", verificarToken, async (req, res) => {
+  try {
+    const { deletedCount } = await Resposta.deleteMany({});
+    res.json({ apagadas: deletedCount });
+  } catch (erro) {
+    console.error("Erro ao zerar respostas:", erro);
+    res.status(500).json({ erro: "Erro interno ao zerar as respostas." });
+  }
+});
+
 // DELETE /api/respostas/:id — protegida, exclui uma resposta
 router.delete("/:id", verificarToken, async (req, res) => {
   try {
