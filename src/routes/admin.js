@@ -4,9 +4,10 @@ const verificarToken = require("../middleware/verificarToken");
 
 const router = express.Router();
 
-router.use(verificarToken);
+// Leitura (lista e resumo) é pública a pedido do dono: o painel abre sem senha.
+// Excluir continua exigindo o token do administrador.
 
-// GET /api/respostas — protegida, lista todas as respostas (mais recentes primeiro)
+// GET /api/respostas — pública, lista todas as respostas (mais recentes primeiro)
 router.get("/", async (req, res) => {
   try {
     const respostas = await Resposta.find()
@@ -19,7 +20,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET /api/respostas/resumo — protegida, retorna total e médias
+// GET /api/respostas/resumo — pública, retorna total e médias
 router.get("/resumo", async (req, res) => {
   try {
     const [resumo] = await Resposta.aggregate([
@@ -49,7 +50,7 @@ router.get("/resumo", async (req, res) => {
 });
 
 // DELETE /api/respostas/:id — protegida, exclui uma resposta
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verificarToken, async (req, res) => {
   try {
     const resposta = await Resposta.findByIdAndDelete(req.params.id);
 
